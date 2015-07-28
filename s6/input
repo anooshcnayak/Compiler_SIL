@@ -1,0 +1,15 @@
+decl
+integer i, n, a[100];
+enddecl
+read(n);
+i = 0;
+while(i < n) do
+read(a[i]);
+i = i+1;
+endwhile;
+i = 0;
+while(i < n) do
+write(a[i]);
+i = i+1;
+endwhile;
+exit;

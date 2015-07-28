@@ -1,0 +1,21 @@
+decl
+integer i, n, a[100];
+boolean b;
+enddecl
+integer main() {
+begin
+read(n);
+i = 0;
+b = 3;
+while(i < b) do
+read(a[i]);
+i = i+1;
+endwhile;
+i = 0;
+while(i < n) do
+write(a[i]);
+i = i+1;
+endwhile;
+return 1;
+end
+}

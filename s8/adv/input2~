@@ -1,0 +1,13 @@
+decl
+	integer i, n, a[100];
+	boolean b;
+enddecl
+integer main() {
+begin
+	a[1] = 10;
+	b = (a[1] == 10);
+	
+	write(b);
+	return 1;
+end
+}

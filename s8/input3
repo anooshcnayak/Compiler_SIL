@@ -1,0 +1,10 @@
+decl
+integer i, n, a[100];
+boolean b;
+enddecl
+integer main() {
+begin
+b = 3;
+return 1;
+end
+}

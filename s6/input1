@@ -1,0 +1,17 @@
+decl
+integer i, n, sum, a[100];
+enddecl
+i = 0;
+read(n);
+while(i < n) do
+read(a[i]);
+i = i+1;
+endwhile;
+sum = 0;
+i = 0;
+while(i < n) do
+sum = sum + a[i];
+i =i+1;
+endwhile;
+write(sum);
+exit;

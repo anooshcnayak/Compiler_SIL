@@ -1,0 +1,29 @@
+typedef enum { 
+	constant, identifier, operation
+} nodeType;
+
+typedef enum { 
+	integer, boolean
+} dataType;
+
+struct Gsymbol {
+
+dataType type;
+char *name; // name of ID
+int size;  // for arrays
+int *p; // Address of the Identifier in Memory
+struct Gsymbol *next; // Pointer to next Symbol Table Entry */
+
+};
+
+struct node {
+	
+	nodeType type;
+	int value;
+	int index;
+	int oper;
+	int ops;
+	struct node **childs;
+
+};
+

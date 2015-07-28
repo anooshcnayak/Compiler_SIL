@@ -1,0 +1,10 @@
+decl
+	integer i, n, a[100];
+	boolean b;
+enddecl
+integer main() {
+begin
+	read(a[1]+10);
+	return 1;
+end
+}

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+yacc -d "$1.y"
+lex "$1.l"
+gcc lex.yy.c y.tab.c
+./a.out

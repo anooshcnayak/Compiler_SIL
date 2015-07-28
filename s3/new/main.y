@@ -1,0 +1,160 @@
+%{	
+
+	#define INF 1000
+	// Headers
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+	#include <stdarg.h>
+	#include "tree.h"
+	
+	// Data
+	int v[26], temp;
+
+	// Function Prototypes
+
+	void yyerror(char *);
+	struct node* makenode(char ch, int x);
+	struct node* opr(int token, int nops, ...);
+	void freenode(struct node *p);
+
+%}
+
+%union { int num; int index; struct node* nodePtr; };
+%start line
+%token <num> NUM
+%token <index> ID
+%token READ
+%token WRITE
+%token EXIT
+%type <nodePtr> expr statement
+%left '+'
+%left '*'
+
+%%
+
+line :		
+	 | line statements				{ eval($2); freenode($2); }
+	 | line EXIT ';' 				{ exit(0); }
+	;
+statement : ID '=' expr ';'		 	{ $$ = opr('=', 2, makenode('c', $1), $3); }
+	; 
+statement : READ '(' ID ')' ';'  	{ $$ = opr(READ, 1, makenode('c', $3)); }
+	;
+statement : WRITE '(' expr ')' ';' 	{ $$ = opr(WRITE, 1, $3); }
+	;
+expr : expr '+' expr { $$ = opr('+', 2, $1, $3); $$->value = eval($$); }
+	 | expr '*' expr { $$ = opr('*', 2, $1, $3); $$->value = eval($$);}
+	 | '(' expr ')'  { $$ = $2;}
+	 | NUM  		 { $$ = makenode('n', $1); }
+	 | ID  			 { check($1); $$ = makenode('c', $1); }
+	 | EXIT ';' 	 { exit(0); }
+	;	
+%%
+
+void check(int i) {
+
+	if(v[i] == INF) {
+		printf("Variable %c not defined.\n", i+'a');
+		exit(0);
+	}
+}
+
+void yyerror(char *string) {
+	
+	printf("%s\n", string);
+}
+
+void assign_val(int i, int val) {
+
+	v[i] = val;
+}
+
+void read_val(int i) {
+
+	int val;
+	scanf("%d", &val);
+	v[i] = val;
+}
+
+void write_val(int val) {
+
+	printf("%d\n", val);
+}
+
+
+int main() {
+	
+	int i;
+	for(i = 0; i < 26; i++) v[i] = INF;
+
+	printf("Straight Line Program Interpreter v1.0 \n");
+	printf("Type 'exit;' to Exit From The Program\n");	
+	printf(">>> ");
+	yyparse();
+	
+	return 0;
+}
+
+struct node* makenode(char ch, int x) {
+
+	struct node *p = (struct node *)malloc(sizeof(struct node));
+	
+	if(ch == 'n') {
+		p->type = constant;
+		p->value = x;
+	}
+	else {
+		p->type = identifier;
+		p->index = x;
+		p->value = v[x];
+	}
+	return p;
+}
+
+struct node* opr(int token, int nops, ...) {
+
+	va_list lst; int i;
+	struct node* p = (struct node *)malloc(sizeof(struct node));
+	p->type = operation;
+	p->childs = (struct node **)malloc(sizeof(struct node *)*nops);
+	p->opr = token;
+	p->ops = nops;
+
+	va_start(lst, nops);
+
+	for(i = 0; i < nops; i++)
+		p->childs[i] = va_arg(lst,struct node *);
+	va_end(lst);
+	
+	return p;
+}
+
+void freenode(struct node *p) {
+
+int i;
+
+for(i = 0; i < p->ops; i++) free(p->childs[i]);
+
+free(p);
+}
+
+int eval(struct node* p) {
+
+	switch(p->type) {
+
+		case constant: 		return p->value;
+		case identifier:	return v[p->index];
+		case operation:
+			switch(p->opr) {
+				
+				case '+': 	return (eval(p->childs[0])+eval(p->childs[1]));
+				case '*': 	return (eval(p->childs[0])*eval(p->childs[1]));
+				case '=': 	assign_val(p->childs[0]->index, p->childs[1]->value); return 0;
+				case READ:	read_val(p->childs[0]->index); return 0;
+				case WRITE:	write_val(p->childs[0]->value); return 0;
+			}
+
+	}
+
+}
